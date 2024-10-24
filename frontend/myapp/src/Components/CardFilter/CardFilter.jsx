@@ -1,9 +1,15 @@
+// all cards you can see after filter menu here code comes
+
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import { addWishList } from "../../Redux/Slice/WishlistSlice";
 import { FaHeart } from "react-icons/fa";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CardFilter = () => {
   const dispatch = useDispatch();
@@ -28,8 +34,42 @@ const CardFilter = () => {
     cardFilter();
   }, [selectedCollection, AllProducts]);
 
+  // sharing data to server
+
+  const wishlistFunAndServer = async (e, ID) => {
+    try {
+      e.stopPropagation();
+      const tokentGOt = Cookies.get("token");
+      if (tokentGOt !== undefined) {
+        const wishVar = await axios.post(
+          "http://localhost:6900/user/wishlist",
+          {
+            cardId: ID,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(wishVar.data);
+        toast.success(wishVar.data.message, {
+          position: "bottom-center",
+        });
+        dispatch(addWishList(ID));
+      } else {
+        navigate("/user/login");
+      }
+    } catch (err) {
+      console.log(err.response.data.message);
+      toast.error(err.response.data.message, {
+        position: "bottom-center",
+      });
+    }
+  };
+
   return (
     <div className="w-[100%] mt-9">
+      {/* --------- TOastify */}
+      <ToastContainer />
       <div className="w-[100%] flex flex-wrap items-start gap-4 justify-center">
         {stateCard?.map((mapProp) => (
           <div
@@ -55,8 +95,7 @@ const CardFilter = () => {
                 <span
                   className="cursor-pointer "
                   onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(addWishList(mapProp.Id));
+                    wishlistFunAndServer(e, mapProp.Id);
                   }}
                 >
                   {wishArr.includes(mapProp.Id) ? (

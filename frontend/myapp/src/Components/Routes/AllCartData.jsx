@@ -4,6 +4,9 @@ import MainHeader from "../Header/MainHeader";
 import { IoMdAdd } from "react-icons/io";
 import { FaMinus } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   cardInc,
   cardDesc,
@@ -11,12 +14,13 @@ import {
   totalPriceFun,
 } from "../../Redux/Slice/CartSlice";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AllCartData = () => {
   const { cartArr, totalNumberItems, totalPrice } = useSelector(
     (state) => state.myCartSlice
   );
-  console.log("carsArr===> ", cartArr);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,9 +28,87 @@ const AllCartData = () => {
     dispatch(totalPriceFun());
   });
 
+  const deleteFun = async (ID) => {
+    try {
+      const delVar = await axios.delete(
+        `http://localhost:6900/user/delcartitem/${ID}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(delVar.data);
+      toast.success(delVar.data.message, {
+        position: "bottom-center",
+      });
+      dispatch(cardDel(ID));
+    } catch (err) {
+      console.log(err.response.data.message);
+      toast.error(err.response.data.message, {
+        position: "bottom-center",
+      });
+    }
+  };
+  // ------------increment fun
+  const incFun = async (ID) => {
+    try {
+      const incVar = await axios.post(
+        "http://localhost:6900/user/cartamount",
+        {
+          cardId: ID,
+          purpose: "inc",
+          amount: 1,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("incVar", incVar.data.message);
+      toast.success(incVar.data.message, {
+        position: "bottom-center",
+      });
+      dispatch(cardInc(ID));
+    } catch (err) {
+      // console.log(err.response.data.message);
+      toast.error(err.response.data.message, {
+        position: "bottom-center",
+      });
+    }
+  };
+
+  // ---------------desc
+
+  const descFun = async (ID) => {
+    try {
+      const descVar = await axios.post(
+        "http://localhost:6900/user/cartamount",
+        {
+          cardId: ID,
+          purpose: "desc",
+          amount: 1,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      // console.log("descVar", descVar.data.message);
+      toast.success(descVar.data.message, {
+        position: "bottom-center",
+      });
+
+      dispatch(cardDesc(ID));
+    } catch (err) {
+      toast.error(err.response.data.message, {
+        position: "bottom-center",
+      });
+      // console.log(err.response.data.message);
+    }
+  };
+
   return (
     <div className="w-[100%] ">
       <MainHeader />
+      {/* ----------toaster */}
+      <ToastContainer />
       {cartArr.length < 1 ? (
         <div className="w-[100%] text-center mt-4">
           <h1 className="text-[2rem] font-bold">Cart Is Empty</h1>
@@ -72,7 +154,7 @@ const AllCartData = () => {
                     type="button"
                     className="bg-blue-500 p-2 rounded-full"
                     onClick={() => {
-                      dispatch(cardDesc(mapProp.id));
+                      descFun(mapProp.id);
                     }}
                   >
                     <FaMinus color="white" />
@@ -82,7 +164,7 @@ const AllCartData = () => {
                     type="button"
                     className="bg-blue-500 p-2 rounded-full"
                     onClick={() => {
-                      dispatch(cardInc(mapProp.id));
+                      incFun(mapProp.id);
                     }}
                   >
                     <IoMdAdd color="white" />
@@ -93,7 +175,7 @@ const AllCartData = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    dispatch(cardDel(mapProp.id));
+                    deleteFun(mapProp.id);
                   }}
                 >
                   <MdDelete size={30} />
@@ -143,7 +225,6 @@ const AllCartData = () => {
           </div>
         </div>
       )}
-
       {/* ----------------footer */}
     </div>
   );

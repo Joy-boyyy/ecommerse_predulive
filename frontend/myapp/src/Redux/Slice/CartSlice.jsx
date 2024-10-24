@@ -11,7 +11,7 @@ const myCartSlice = createSlice({
   initialState,
   reducers: {
     cardPush: (state, action) => {
-      const { Id, Amount, Title, Image } = action.payload;
+      const { Id, Amount, Title, Image, productAmount = 1 } = action.payload;
 
       const findVar = state.cartArr.findIndex((findProp) => findProp.id === Id);
 
@@ -19,7 +19,7 @@ const myCartSlice = createSlice({
         state.cartArr.push({
           id: Id,
           price: Amount,
-          totalAmount: 1,
+          totalAmount: productAmount,
           imgs: Image,
           title: Title,
         });

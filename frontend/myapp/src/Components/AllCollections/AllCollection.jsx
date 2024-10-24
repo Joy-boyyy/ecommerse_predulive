@@ -1,3 +1,5 @@
+// all main category related code here, here Collection means Category
+
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -15,8 +17,6 @@ const AllCollection = () => {
   AllProducts.forEach((product) => {
     mySet.add(product.Rel);
   });
-
-  console.log("mySet =====>", mySet);
 
   return (
     <div className="w-[100%] mt-2 ">

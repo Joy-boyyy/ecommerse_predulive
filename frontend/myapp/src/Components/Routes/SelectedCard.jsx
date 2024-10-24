@@ -1,5 +1,7 @@
+// selected card
+
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import MainHeader from "../Header/MainHeader";
 import { useSelector, useDispatch } from "react-redux";
 import { IoCartOutline } from "react-icons/io5";
@@ -8,9 +10,14 @@ import { addWishList } from "../../Redux/Slice/WishlistSlice";
 import { FaHeart } from "react-icons/fa";
 import { cardPush } from "../../Redux/Slice/CartSlice";
 import Footer from "../Footer/Footer";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SelectedCard = () => {
   const AllProducts = useSelector((state) => state.productSlice);
+  const navigate = useNavigate();
 
   const { Id } = useParams();
   const [detailCard, setDetailedCard] = useState({});
@@ -18,24 +25,90 @@ const SelectedCard = () => {
 
   const dispatch = useDispatch();
 
-  console.log("Id===>", Id);
-
   useEffect(() => {
     const runFun = () => {
       const foundDATA = AllProducts.filter((item) => item.Id.toString() === Id);
-      console.log("foundDATA ===>", foundDATA);
+
       setDetailedCard(foundDATA[0]);
     };
     runFun();
   }, [AllProducts, Id]);
 
-  console.log("detailCard ===>", detailCard);
-
   // const objData = Object.keys(detailCard?.Specifications);
+
+  // sharing data to server
+
+  const wishlistFunAndServer = async (e, ID) => {
+    try {
+      e.stopPropagation();
+
+      const tokentGOt = Cookies.get("token");
+      if (tokentGOt !== undefined) {
+        const wishVar = await axios.post(
+          "http://localhost:6900/user/wishlist",
+          {
+            cardId: ID,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        // console.log(wishVar.data);
+        toast.success(wishVar.data.message, {
+          position: "bottom-center",
+        });
+
+        dispatch(addWishList(ID));
+      } else {
+        navigate("/user/login");
+      }
+    } catch (err) {
+      // console.log(err.response.data.message);
+      toast.error(err.response.data.message, {
+        position: "bottom-center",
+      });
+    }
+  };
+
+  // ----addToCartFun
+  const addToCartFun = async (detailCard) => {
+    try {
+      const tokentGOt = Cookies.get("token");
+      if (tokentGOt !== undefined) {
+        const cartRVar = await axios.post(
+          "http://localhost:6900/user/addcart",
+          {
+            cardId: detailCard.Id,
+            price: detailCard.Amount,
+            amount: 1,
+            title: detailCard.Title,
+            imgs: detailCard.Image,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("cartRVar==>", cartRVar);
+        dispatch(cardPush(detailCard));
+        toast.success(cartRVar.data.message, {
+          position: "bottom-center",
+        });
+      } else {
+        navigate("/user/login");
+      }
+    } catch (err) {
+      // console.log(err.response.data.message);
+      toast.error(err.response.data.message, {
+        position: "bottom-center",
+      });
+    }
+  };
 
   return (
     <div className="w-[100%]">
       <MainHeader />
+      {/* -----------Toaster */}
+      <ToastContainer />
       <div className="w-[100%] flex gap-3 min-h-[90vh] items-center p-4">
         <div className="w-[30%]">
           <img
@@ -79,8 +152,7 @@ const SelectedCard = () => {
                 type="button"
                 className="flex gap-2 items-center bg-green-400 p-3 rounded-md"
                 onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch(addWishList(detailCard.Id));
+                  wishlistFunAndServer(e, detailCard.Id);
                 }}
               >
                 <span>Wishlist </span>
@@ -96,7 +168,7 @@ const SelectedCard = () => {
                 type="button"
                 className="flex gap-2 items-center bg-blue-300 p-3 rounded-md"
                 onClick={() => {
-                  dispatch(cardPush(detailCard));
+                  addToCartFun(detailCard);
                 }}
               >
                 <span>Add to cart </span>

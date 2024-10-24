@@ -9,7 +9,6 @@ import Footer from "../Footer/Footer";
 
 const CollectionRoute = () => {
   const { mapProp } = useParams();
-  console.log("mapProp", mapProp);
 
   const dispatch = useDispatch();
 

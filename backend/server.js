@@ -10,7 +10,14 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: "http://localhost:3000", // Replace with your frontend URL
+  credentials: true, // Allow credentials to be sent
+};
+
+app.use(cors(corsOptions));
+
 app.use("/user", myRouter);
 app.use(errHandle);
 
