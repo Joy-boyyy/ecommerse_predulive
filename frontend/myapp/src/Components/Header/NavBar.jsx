@@ -5,6 +5,9 @@ import { countCartItem } from "../../Redux/Slice/CartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { BsBoxSeam } from "react-icons/bs";
+import { doEmpty } from "../../Redux/Slice/CartSlice";
+import { setWishList } from "../../Redux/Slice/WishlistSlice";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -41,6 +44,8 @@ const NavBar = () => {
                       type="button"
                       onClick={() => {
                         Cookies.remove("token");
+                        dispatch(doEmpty([]));
+                        dispatch(setWishList([]));
                         navigate("/user/login");
                       }}
                     >
@@ -83,6 +88,18 @@ const NavBar = () => {
               }}
             />
           </li>
+
+          {/* ---------------- All Orders */}
+          {Cookies.get("token") !== undefined && (
+            <li
+              onClick={() => {
+                navigate("/orders");
+              }}
+            >
+              <BsBoxSeam className="cursor-pointer" size={25} />
+            </li>
+          )}
+
           <li className="relative ">
             <MdOutlineShoppingCart
               size={30}

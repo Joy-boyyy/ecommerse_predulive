@@ -21,10 +21,10 @@ const MainHeader = () => {
           </h1>
         </div>
         {/* ----------------search box */}
-        <div className="basis-[75%]  flex items-center">
+        <div className="basis-[73%]  flex items-center">
           <Search />
         </div>
-        <div className="w-[15%]  flex items-center">
+        <div className="w-[12%]  flex items-center">
           <NavBar />
         </div>
       </div>

@@ -14,10 +14,15 @@ import { cardPush } from "./Redux/Slice/CartSlice";
 import { useDispatch } from "react-redux";
 import { setWishList } from "./Redux/Slice/WishlistSlice";
 import NotFound from "./Components/NotFound/NotFound";
+import OrderDetails from "./Components/OrderDetails/OrderDetails";
+import PaymentPage from "./Components/PaymentPage/PaymentPage";
 
 const App = () => {
   const dispatch = useDispatch();
   // fetching data from backend if incase someone does refresh
+  // Note: if no any card item is present then i will get error which will not break the code
+  // because each time i am fetching data if we do refresh
+
   useEffect(() => {
     // -------------fetching cart data
 
@@ -44,13 +49,16 @@ const App = () => {
           }
         }
       } catch (err) {
-        console.log(err.response.data.message);
+        // console.log(err.response.data.message);
+        console.log(err.message);
       }
     };
 
     // ----------- FUnction call
     fetchCartFun();
   }, [dispatch]);
+
+  // Note: if no any wishlist is present then i will get error which will not break the code
 
   useEffect(() => {
     const fetchWishFun = async () => {
@@ -66,7 +74,8 @@ const App = () => {
           dispatch(setWishList(wishVarData?.data?.wishData));
         }
       } catch (err) {
-        console.log(err.response.data.message);
+        // console.log(err.response.data.message);
+        console.log(err.message);
       }
     };
 
@@ -92,6 +101,16 @@ const App = () => {
 
           <Route path="user/register" element={<Register />} />
           <Route path="user/login" element={<Login />} />
+          <Route
+            path="orders"
+            element={<ProtectedRoute Component={OrderDetails} />}
+          />
+
+          <Route
+            path="payment"
+            element={<ProtectedRoute Component={PaymentPage} />}
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

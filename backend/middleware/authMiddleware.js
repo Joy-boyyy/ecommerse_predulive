@@ -14,7 +14,9 @@ const AuthMiddleware = (req, res, next) => {
     const decoded = jwt.verify(userJwt, process.env.SECREATKEY);
 
     if (!decoded) {
-      return res.status(401).json({ message: "Unauthorized !!" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized !!" });
     } else {
       req.userID = decoded.payload;
       next();

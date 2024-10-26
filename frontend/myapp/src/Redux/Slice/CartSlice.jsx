@@ -71,6 +71,11 @@ const myCartSlice = createSlice({
         return fst + sec.totalAmount * sec.price;
       }, 0);
     },
+
+    // ---- ---all cart empty
+    doEmpty: (state, action) => {
+      state.cartArr = action.payload;
+    },
   },
 });
 
@@ -81,5 +86,6 @@ export const {
   cardDesc,
   countCartItem,
   totalPriceFun,
+  doEmpty,
 } = myCartSlice.actions;
 export default myCartSlice.reducer;

@@ -8,6 +8,7 @@ const cartInc = require("../endPoints/cartInc");
 const delShopping = require("../endPoints/deleteCard");
 const fetchWishFun = require("../endPoints/gettingWishlist");
 const fetchingCartData = require("../endPoints/gettingCart");
+const userOrderFun = require("../endPoints/order");
 
 const myRouter = express.Router();
 
@@ -19,5 +20,6 @@ myRouter.route("/cartamount").post(AuthMiddleware, cartInc);
 myRouter.route("/delcartitem/:cartIdToDel").delete(AuthMiddleware, delShopping);
 myRouter.route("/wishlists").get(AuthMiddleware, fetchWishFun);
 myRouter.route("/carts").get(AuthMiddleware, fetchingCartData);
+myRouter.route("/order").post(AuthMiddleware, userOrderFun);
 
 module.exports = myRouter;

@@ -14,13 +14,17 @@ const login = async (req, res, next) => {
     const userAvail = await UserModel.findOne({ email });
 
     if (!userAvail) {
-      res.status(404).json({ message: "User is not found !", success: false });
+      return res
+        .status(404)
+        .json({ message: "User is not found !", success: false });
     }
 
     const passMatching = await bcrypt.compare(password, userAvail.password);
 
     if (!passMatching) {
-      res.status(401).json({ message: "Something went wrong !" });
+      return res
+        .status(401)
+        .json({ message: "Invalid password!", success: false });
     } else {
       var token = jwt.sign({ payload: userAvail._id }, process.env.SECREATKEY, {
         expiresIn: "1d",

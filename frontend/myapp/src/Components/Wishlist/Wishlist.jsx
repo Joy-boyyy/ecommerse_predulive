@@ -63,7 +63,7 @@ const Wishlist = () => {
           </div>
         ) : (
           <div className="w-[100%] p-3">
-            {wishedFor.map((mapProp) => (
+            {wishedFor?.map((mapProp) => (
               <div
                 key={mapProp.Id}
                 className="w-[100%] flex gap-4 items-center border-b mt-3 border-t cursor-pointer"

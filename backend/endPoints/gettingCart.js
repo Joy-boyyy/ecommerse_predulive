@@ -6,13 +6,21 @@ const fetchingCartData = async (req, res, next) => {
   try {
     const wishlist = await ShoppingCart.findOne({ refTo: adminID });
 
-    if (!wishlist) {
-      return res.status(404).json({ message: "Sorry No User Found" });
-    } else {
+    if (wishlist) {
       return res
         .status(200)
         .json({ message: "Cart Fetching", cartData: wishlist.cards });
     }
+
+    // if (!wishlist) {
+    //   return res.status(404).json({
+    //     message: "Connected but no any cart Data founded yet, Please Add !!!",
+    //   });
+    // } else {
+    //   return res
+    //     .status(200)
+    //     .json({ message: "Cart Fetching", cartData: wishlist.cards });
+    // }
   } catch (err) {
     next(err);
   }
