@@ -9,6 +9,8 @@ const delShopping = require("../endPoints/deleteCard");
 const fetchWishFun = require("../endPoints/gettingWishlist");
 const fetchingCartData = require("../endPoints/gettingCart");
 const userOrderFun = require("../endPoints/order");
+const fetchingOrders = require("../endPoints/getOrderHistory");
+const { order, verify } = require("../paymentCode/paymentCode");
 
 const myRouter = express.Router();
 
@@ -21,5 +23,11 @@ myRouter.route("/delcartitem/:cartIdToDel").delete(AuthMiddleware, delShopping);
 myRouter.route("/wishlists").get(AuthMiddleware, fetchWishFun);
 myRouter.route("/carts").get(AuthMiddleware, fetchingCartData);
 myRouter.route("/order").post(AuthMiddleware, userOrderFun);
+myRouter.route("/orderhistory").get(AuthMiddleware, fetchingOrders);
+
+// ------------------- payment code
+
+myRouter.route("/orderbuying").post(AuthMiddleware, order);
+myRouter.route("/orderverify").post(AuthMiddleware, verify);
 
 module.exports = myRouter;

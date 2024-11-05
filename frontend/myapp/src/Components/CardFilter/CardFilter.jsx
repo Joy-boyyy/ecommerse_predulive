@@ -1,7 +1,7 @@
 // all cards you can see after filter menu here code comes
 
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import { addWishList } from "../../Redux/Slice/WishlistSlice";
@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 
 const CardFilter = () => {
   const dispatch = useDispatch();
@@ -36,35 +37,38 @@ const CardFilter = () => {
 
   // sharing data to server
 
-  const wishlistFunAndServer = async (e, ID) => {
-    try {
-      e.stopPropagation();
-      const tokentGOt = Cookies.get("token");
-      if (tokentGOt !== undefined) {
-        const wishVar = await axios.post(
-          "http://localhost:6900/user/wishlist",
-          {
-            cardId: ID,
-          },
-          {
-            withCredentials: true,
-          }
-        );
-        console.log(wishVar.data);
-        toast.success(wishVar.data.message, {
+  const wishlistFunAndServer = useCallback(
+    async (e, ID) => {
+      try {
+        e.stopPropagation();
+        const tokentGOt = Cookies.get("token");
+        if (tokentGOt !== undefined) {
+          const wishVar = await axios.post(
+            "http://localhost:6900/user/wishlist",
+            {
+              cardId: ID,
+            },
+            {
+              withCredentials: true,
+            }
+          );
+          console.log(wishVar.data);
+          toast.success(wishVar.data.message, {
+            position: "bottom-center",
+          });
+          dispatch(addWishList(ID));
+        } else {
+          navigate("/user/login");
+        }
+      } catch (err) {
+        console.log(err.response.data.message);
+        toast.error(err.response.data.message, {
           position: "bottom-center",
         });
-        dispatch(addWishList(ID));
-      } else {
-        navigate("/user/login");
       }
-    } catch (err) {
-      console.log(err.response.data.message);
-      toast.error(err.response.data.message, {
-        position: "bottom-center",
-      });
-    }
-  };
+    },
+    [dispatch, navigate]
+  );
 
   return (
     <div className="w-[100%] mt-9">
@@ -72,7 +76,10 @@ const CardFilter = () => {
       <ToastContainer />
       <div className="w-[100%] flex flex-wrap items-start gap-4 justify-center">
         {stateCard?.map((mapProp) => (
-          <div
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
             onClick={() => {
               navigate(`/selected/${mapProp.Id}`);
             }}
@@ -106,7 +113,7 @@ const CardFilter = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

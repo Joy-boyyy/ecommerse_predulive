@@ -33,7 +33,7 @@ const NavBar = () => {
   return (
     <div className="w-[100%]">
       <nav className="w-[100%]">
-        <ul className="flex gap-2 items-center">
+        <ul className="flex gap-2 items-center justify-end md:justify-normal">
           <li>
             <details className="dropdown">
               <summary className="btn m-1">Credential</summary>

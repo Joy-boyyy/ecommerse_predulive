@@ -19,6 +19,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/user", myRouter);
+
 app.use(errHandle);
 
 app.listen(port, () => {

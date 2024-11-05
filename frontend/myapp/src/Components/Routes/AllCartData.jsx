@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MainHeader from "../Header/MainHeader";
 import { IoMdAdd } from "react-icons/io";
@@ -28,81 +28,90 @@ const AllCartData = () => {
     dispatch(totalPriceFun());
   });
 
-  const deleteFun = async (ID) => {
-    try {
-      const delVar = await axios.delete(
-        `http://localhost:6900/user/delcartitem/${ID}`,
-        {
-          withCredentials: true,
-        }
-      );
-      console.log(delVar.data);
-      toast.success(delVar.data.message, {
-        position: "bottom-center",
-      });
-      dispatch(cardDel(ID));
-    } catch (err) {
-      console.log(err.response.data.message);
-      toast.error(err.response.data.message, {
-        position: "bottom-center",
-      });
-    }
-  };
+  const deleteFun = useCallback(
+    async (ID) => {
+      try {
+        const delVar = await axios.delete(
+          `http://localhost:6900/user/delcartitem/${ID}`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(delVar.data);
+        toast.success(delVar.data.message, {
+          position: "bottom-center",
+        });
+        dispatch(cardDel(ID));
+      } catch (err) {
+        console.log(err.response.data.message);
+        toast.error(err.response.data.message, {
+          position: "bottom-center",
+        });
+      }
+    },
+    [dispatch]
+  );
   // ------------increment fun
-  const incFun = async (ID) => {
-    try {
-      const incVar = await axios.post(
-        "http://localhost:6900/user/cartamount",
-        {
-          cardId: ID,
-          purpose: "inc",
-          amount: 1,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      console.log("incVar", incVar.data.message);
-      toast.success(incVar.data.message, {
-        position: "bottom-center",
-      });
-      dispatch(cardInc(ID));
-    } catch (err) {
-      // console.log(err.response.data.message);
-      toast.error(err.response.data.message, {
-        position: "bottom-center",
-      });
-    }
-  };
+  const incFun = useCallback(
+    async (ID) => {
+      try {
+        const incVar = await axios.post(
+          "http://localhost:6900/user/cartamount",
+          {
+            cardId: ID,
+            purpose: "inc",
+            amount: 1,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("incVar", incVar.data.message);
+        toast.success(incVar.data.message, {
+          position: "bottom-center",
+        });
+        dispatch(cardInc(ID));
+      } catch (err) {
+        // console.log(err.response.data.message);
+        toast.error(err.response.data.message, {
+          position: "bottom-center",
+        });
+      }
+    },
+    [dispatch]
+  );
 
   // ---------------desc
 
-  const descFun = async (ID) => {
-    try {
-      const descVar = await axios.post(
-        "http://localhost:6900/user/cartamount",
-        {
-          cardId: ID,
-          purpose: "desc",
-          amount: 1,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log("descVar", descVar.data.message);
-      toast.success(descVar.data.message, {
-        position: "bottom-center",
-      });
+  const descFun = useDispatch(
+    async (ID) => {
+      try {
+        const descVar = await axios.post(
+          "http://localhost:6900/user/cartamount",
+          {
+            cardId: ID,
+            purpose: "desc",
+            amount: 1,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        // console.log("descVar", descVar.data.message);
+        toast.success(descVar.data.message, {
+          position: "bottom-center",
+        });
 
-      dispatch(cardDesc(ID));
-    } catch (err) {
-      toast.error(err.response.data.message, {
-        position: "bottom-center",
-      });
-      // console.log(err.response.data.message);
-    }
-  };
+        dispatch(cardDesc(ID));
+      } catch (err) {
+        toast.error(err.response.data.message, {
+          position: "bottom-center",
+        });
+        // console.log(err.response.data.message);
+      }
+    },
+    [dispatch]
+  );
 
   return (
     <div className="w-[100%] ">
@@ -119,7 +128,7 @@ const AllCartData = () => {
             {cartArr.map((mapProp) => (
               <div
                 key={mapProp.id}
-                className="flex gap-5 justify-between items-center p-5 border-t border-b "
+                className="flex flex-col md:flex-row gap-5 justify-between items-center p-5 border-t border-b "
               >
                 <div className="flex gap-3 items-center">
                   <img
@@ -149,37 +158,40 @@ const AllCartData = () => {
                   </div>
                 </div>
                 {/* ----------------inc and desc button */}
-                <div className="flex gap-4">
+                {/* -------------- button Container */}
+                <div className="flex gap-5">
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      className="bg-blue-500 p-2 rounded-full"
+                      onClick={() => {
+                        descFun(mapProp.id);
+                      }}
+                    >
+                      <FaMinus color="white" />
+                    </button>
+                    {mapProp.totalAmount}
+                    <button
+                      type="button"
+                      className="bg-blue-500 p-2 rounded-full"
+                      onClick={() => {
+                        incFun(mapProp.id);
+                      }}
+                    >
+                      <IoMdAdd color="white" />
+                    </button>
+                  </div>
+
+                  {/* ------------- delete button */}
                   <button
                     type="button"
-                    className="bg-blue-500 p-2 rounded-full"
                     onClick={() => {
-                      descFun(mapProp.id);
+                      deleteFun(mapProp.id);
                     }}
                   >
-                    <FaMinus color="white" />
-                  </button>
-                  {mapProp.totalAmount}
-                  <button
-                    type="button"
-                    className="bg-blue-500 p-2 rounded-full"
-                    onClick={() => {
-                      incFun(mapProp.id);
-                    }}
-                  >
-                    <IoMdAdd color="white" />
+                    <MdDelete size={30} />
                   </button>
                 </div>
-
-                {/* ------------- delete button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    deleteFun(mapProp.id);
-                  }}
-                >
-                  <MdDelete size={30} />
-                </button>
               </div>
             ))}
           </div>

@@ -16,6 +16,8 @@ import { setWishList } from "./Redux/Slice/WishlistSlice";
 import NotFound from "./Components/NotFound/NotFound";
 import OrderDetails from "./Components/OrderDetails/OrderDetails";
 import PaymentPage from "./Components/PaymentPage/PaymentPage";
+import AIprojectPage from "./Components/aiProject/AIprojectPage";
+import AIprojectDetails from "./Components/aiProject/AIprojectDetails";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -110,6 +112,9 @@ const App = () => {
             path="payment"
             element={<ProtectedRoute Component={PaymentPage} />}
           />
+
+          <Route path="ai" element={<AIprojectPage />} />
+          <Route path="ai-project-details/:id" element={<AIprojectDetails />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

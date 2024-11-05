@@ -10,6 +10,7 @@ const userOrder = new mongoose.Schema({
       totalAmount: { type: Number, default: 0 },
       imgs: { type: String, default: "" },
       title: { type: String, default: "" },
+      status: { type: String, default: "Pending" },
     },
   ],
   detail: {
